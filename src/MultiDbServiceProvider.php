@@ -1,6 +1,7 @@
 <?php 
 
 namespace YS\MultiDB;
+
 use Illuminate\Support\ServiceProvider;
 use YS\MultiDB\Commands\MakeNewMigration;
 use YS\MultiDB\Commands\NewMigrations;

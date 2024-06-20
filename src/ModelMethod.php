@@ -2,7 +2,6 @@
     
     namespace YS\MultiDB;
     
-    use App\Utils\Classes\OutboundStatus;
     use Illuminate\Database\Eloquent\Builder;
     use Illuminate\Http\Request;
     use Illuminate\Support\Str;

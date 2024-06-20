@@ -17,7 +17,7 @@
 
             $connection = $connection ?? config('database.default');
             if( $connection === 'default' ) {
-                return config('app.database' );
+                return config('app.database');
             }
             $config = DB::connection($connection)->getConfig();
             return $config['database'];
@@ -25,6 +25,7 @@
     }
 
     if (!function_exists('client')) {
+
         /**
          *
          * Return id of client stored in session/cache
@@ -51,6 +52,7 @@
     }
 
     if (!function_exists('code')) {
+
         /**
          *
          * Return name of database connection
@@ -87,6 +89,7 @@
     }
 
     if (!function_exists('client_code')) {
+
         /**
          *
          * Return name of database connection
@@ -105,6 +108,7 @@
     }
 
     if (!function_exists('get_connection')) {
+
         /**
          * Allow creation of Dynamic DB connections
          * @param string $database name of
@@ -157,7 +161,7 @@
     if (!function_exists('createNewSchema')) {
         /**
          * Configures a tenant's database connection.
-         * @param  string $dbName The database name.
+         * @param  string $schemaName The schema name.
          * @return connection
          */
         function createNewSchema($schemaName)
@@ -171,7 +175,6 @@
             DB::transaction(function () use ($schemaName, $migrationPath  ) {
                 DB::statement("CREATE SCHEMA IF NOT EXISTS $schemaName");
                 Migration::$schema = strtolower($schemaName);
-               
                 Artisan::call('migrate', ['--path' => $migrationPath, '--force' => true]);
             });
         }
