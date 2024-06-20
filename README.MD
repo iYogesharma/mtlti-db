@@ -18,7 +18,7 @@ YS\MultiDB\Models\Model Class.
 
 ```php
 
-    composer require iyogesharma/multi_db
+    composer require iyogesharma/multi-db
 
     php artisan vendor:publish --tag=multidb:migrations
 
