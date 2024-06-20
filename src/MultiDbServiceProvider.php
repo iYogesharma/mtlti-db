@@ -54,8 +54,6 @@ class MultiDbServiceProvider extends ServiceProvider
         // merge config
         $this->mergeConfigFrom($multidbConfig, 'multidb');
 
-       
-        
     }
 
 }

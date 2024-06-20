@@ -2,7 +2,7 @@
 
 return [
     
-    'new_migrations_path' => env('NEW_MIGRATIONS_PATH','app/newdatabase'),
+    'new_migrations_path' => env('NEW_MIGRATIONS_PATH','app/newdatabase/migrations'),
 
     'db_connection' => 'mysql'
 ];

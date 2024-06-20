@@ -36,26 +36,15 @@ class NewMigrations extends Command
         $migrationPath = config('multidb.new_migrations_path');
 
         $dbConnection = config('multidb.db_connection');
-        
+
         foreach ($clients as $database) {
 
-            if (  $dbConnection == 'pgsql' ) {
-                
-                Migration::$schema = $database;
+            $database = strtolower(database($dbConnection)."_{$database}");
 
-                Artisan::call('migrate', ['--path' => $migrationPath, '--force' => true]);
+            get_connection($database,false,$dbConnection);
 
-            } else {
+            Artisan::call('migrate', ['--database' => $database, '--path' => $migrationPath, '--force' => true]);
 
-                $database = database($dbConnection)."_{$database}";
-
-                get_connection($database,false,$dbConnection);
-
-                Artisan::call('migrate', ['--database' => $database, '--path' => $migrationPath, '--force' => true]);
-
-            }
-
-          
             if( $this->option('seed') )
             {
                 $path = base_path( $migrationPath.'/seeders');

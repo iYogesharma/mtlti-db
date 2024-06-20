@@ -3,6 +3,7 @@
     use App\Http\Controllers\Controller;
     use Illuminate\Support\Facades\Artisan;
     use Illuminate\Support\Facades\DB;
+    use YS\MultiDB\Migration;   
 
     if (!function_exists('database')) {
 
@@ -58,8 +59,6 @@
          */
         function code( $key = null)
         {
-
-            return "wms.tali_foods";
             $client = null;
 
             $type = config('multidb.db_connection');
@@ -79,15 +78,7 @@
             
             if ($client) 
             {
-                if($type == 'pgsql') 
-                {
-                    return database($type) . ".{$client->code}";
-                } 
-                else
-                {
-                    return database($type) . "_{$client->code}";
-                }
-              
+                return strtolower(database($type) . "_{$client->code}");
             }
             
            
@@ -124,19 +115,17 @@
          */
         function get_connection($database, $cron = false, $type='mysql' )
         {
+            $database = strtolower($database);
+            
             $options = config("database.connections.{$type}");
 
-            if( $type == 'pgsql' ) {
-                $options['database'] = "{$options['database']}.$database";
-            } else {
-                $options['database'] = $database;
-            }
-           
+            $options['database'] = $database;
+
             // Add newly created connection to the run-time
             // configuration for the duration of the request.
-            config()->set('database.connections.' .  $options['database'], $options);
+            config()->set('database.connections.' .  $database, $options);
 
-            $cron ? \YS\MultiDB\Models\Model::setCronKey(   $options['database']  ) : '';
+            $cron ? \YS\MultiDB\Models\Model::setCronKey( $database ) : '';
         }
     }
 
@@ -150,12 +139,40 @@
         {
             $migrationPath = config('multidb.new_migrations_path');
 
-            $defaultConnection = config('multidb.default_connection');
+            $dbConnection = config('multidb.db_connection');
 
-            get_connection($dbName, false, $defaultConnection);
+            $dbName = strtolower($dbName);
+
+            get_connection($dbName, false, $dbConnection);
+
+            DB::statement(" CREATE DATABASE $dbName");
+
             DB::transaction(function () use ($dbName, $migrationPath ) {
-                DB::statement("CREATE DATABASE $dbName");
                 Artisan::call('migrate', ['--database' => $dbName, '--path' => $migrationPath, '--force' => true]);
+            });
+        }
+    }
+
+
+    if (!function_exists('createNewSchema')) {
+        /**
+         * Configures a tenant's database connection.
+         * @param  string $dbName The database name.
+         * @return connection
+         */
+        function createNewSchema($schemaName)
+        {
+            $migrationPath = config('multidb.new_migrations_path');
+
+            $dbConnection = config('multidb.db_connection');
+
+            get_connection($schemaName, true, $dbConnection );
+
+            DB::transaction(function () use ($schemaName, $migrationPath  ) {
+                DB::statement("CREATE SCHEMA IF NOT EXISTS $schemaName");
+                Migration::$schema = strtolower($schemaName);
+               
+                Artisan::call('migrate', ['--path' => $migrationPath, '--force' => true]);
             });
         }
     }

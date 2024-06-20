@@ -66,9 +66,6 @@ class Model extends EloquentModel
         {
             $this->setDefaultDatabaseConnection( $type );
         }
-    
-      
-       
         parent::__construct($attributes);
     }
 
@@ -92,37 +89,38 @@ class Model extends EloquentModel
         {
             $this->setTableName( self::$cronKey, $type);
 
-            if( $type == 'mysql') 
-            {
-                get_connection( self::$cronKey, false, $type );
+            get_connection( self::$cronKey, false, $type );
 
-                $this->setConnection( self::$cronKey );
-            }
- 
-           
+            $this->setConnection( self::$cronKey );
+
         }
         else
         {  
             $this->setTableName( code(self::$cacheKey ), $type);
 
-            if( $type == 'mysql') 
-            {
-                get_connection( code( self::$cacheKey), false, $type );
+            get_connection( code( self::$cacheKey), false, $type );
             
-                $this->setConnection( code( self::$cacheKey ) );
-            }
+            $this->setConnection( code( self::$cacheKey ) );
         }
     }
 
     public function setTableName( string $prefix, $type ) 
     {
-        $this->table= "$prefix.".$this->getTable();
+        if(  $type == 'pgsql') 
+        {
+            $this->table= "$prefix.public.".$this->getTable();
+        } 
+        else 
+        {
+            $this->table= "$prefix.".$this->getTable();
+        }
+       
     }
     
     // Set Default Database Connection from config/database.php
     protected function setDefaultDatabaseConnection( string $type )
     {  
-        $this->setTableName( config("database.connections.{$type}.database").'.public', $type);
+        $this->setTableName( config("database.connections.{$type}.database"), $type);
     }
 
     //Set Query builder if you want to define your own utility functions

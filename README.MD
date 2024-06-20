@@ -2,8 +2,8 @@
 
 ### What is this repository for? ###
 
-* This Repo is created to make creating one main database/schema and multiple client specific database/schemas easily. 
-* It will automatically resolve db connection/schema names using some properties defined in
+* This Repo is created to make creating one main database and multiple client specific database easily. 
+* It will automatically resolve db connection names using some properties defined in
 YS\MultiDB\Models\Model Class.
 
 * Model::$cachekey key to search client db name in cache. if  set it will auto configure database connection based on this key value from cache. If not itn will connect to default database
@@ -25,7 +25,7 @@ YS\MultiDB\Models\Model Class.
     php artisan vendor:publish --tag=multidb:models
 
     //optional
-
+    
     php artisan vendor:publish --tag=multidb:config
 
 ```
@@ -93,9 +93,14 @@ You can set this value to true if your model belongs to main database not client
 * To create new migration inside app/newdatabase folder for client specific database use 
 * ``` php artisan make:new-migration {name of migration} ```
 * In order to run seeders for client specific database you can create seeders directory inside app/newdatabase folder and pass --seed option along with php artisan new:migrations command to run seeders inside this directory
-* To run only seeders you can run ```php new:seed ```
+* To run only seeders you can run ```php artisan new:seed ```
 * to run a specific seeder inside this folder run
-* ``` php new:seed --path=App\\Newdatabase\\Seeders\\TESTSeeder    ```
+* ``` php artisan new:seed --path=App\\Newdatabase\\Seeders\\TESTSeeder    ```
+
+
+## To Check How TO Create New DB Or Schema 
+``` @see  src/Controllers/ClientController ```
+
 
 ### Who do I talk to? ###
 

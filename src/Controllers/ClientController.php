@@ -24,7 +24,7 @@ class ClientController extends Controller
      * @param Request $request
      * @return view with status or error
      */
-    public function store(Request $request)
+    public function storeMysql(Request $request)
     {
         $request->validate($this->rules(), $this->messages());
         try {
@@ -34,9 +34,31 @@ class ClientController extends Controller
             }
            
         } catch ( \Exception $e) {
-            $client->config()->delete();
             $client->delete();
             DB::statement("DROP DATABASE " . database('mysql') . "_$client->code");
+            Log::info('Exception in '. __CLASS__, ['Exception' => $e]);
+        }
+    }
+
+
+    /**
+     * postAddClient function.
+     *
+     * @param Request $request
+     * @return view with status or error
+     */
+    public function storePgsql(Request $request)
+    {
+        $request->validate($this->rules(), $this->messages());
+        try {
+            $client = Client::create($request->all() + ['created_by' => 'admin']);
+            if ($client) {
+                createNewSchema($client->code);
+            }
+           
+        } catch ( \Exception $e) {
+            $client->delete();
+            DB::statement("DROP SCHEMA $client->code");
             Log::info('Exception in '. __CLASS__, ['Exception' => $e]);
         }
     }

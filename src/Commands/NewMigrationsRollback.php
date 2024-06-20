@@ -38,20 +38,11 @@ class NewMigrationsRollback extends Command
         
         foreach ($clients as $database) {
 
-            if (  $dbConnection == 'pgsql' ) {
-                
-                Migration::$schema = $database;
+            $database = database($dbConnection)."_{$database}";
 
-                Artisan::call('migrate:rollback', ['--path' => $migrationPath, '--force' => true]);
+            get_connection($database,false,$dbConnection);
 
-            }  else if ( $dbConnection == 'mysql' ) {
-
-                $database = database($dbConnection)."_{$database}";
-
-                get_connection($database,false,$dbConnection);
-
-                Artisan::call('migrate:rollback', ['--database' => $database, '--path' => $migrationPath, '--force' => true]);
-            }
+            Artisan::call('migrate:rollback', ['--database' => $database, '--path' => $migrationPath, '--force' => true]);
         }
     }
 }
