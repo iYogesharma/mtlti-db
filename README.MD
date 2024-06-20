@@ -105,4 +105,3 @@ You can set this value to true if your model belongs to main database not client
 ### Who do I talk to? ###
 
 * [Yogesh Sharma](https://github.com/iYogesharma)
-* [Coderootz](https://coderootz.com/)
