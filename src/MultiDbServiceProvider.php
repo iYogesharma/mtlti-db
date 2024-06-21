@@ -55,6 +55,11 @@ class MultiDbServiceProvider extends ServiceProvider
         // merge config
         $this->mergeConfigFrom($multidbConfig, 'multidb');
 
+
+        $this->app->singleton('tr', function () {
+            return new TransactionManager();
+        });
+
     }
 
 }
